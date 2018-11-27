@@ -1,2 +1,4 @@
-# TrainScheduler
-A simple application using localStorage to display fictional train schedule data.
+# Train Scheduler
+## A simple application using localStorage to display fictional train schedule data.
+
+## TODO
