@@ -2,9 +2,9 @@ $(document).ready(function () {
     let allTrains = (localStorage.getItem('allTrains') || []);
     let trainCount = (localStorage.getItem('trainCount') || 0);
 
-    function nextTime(firstTime, frequency) {
+    function nextTime(starts, frequency) {
         const now = moment();
-        let next = moment(`${firstTime} ${now.date()} ${now.month() + 1} ${now.year()}`, 'kk:mm DD MM YYYY', true);
+        let next = moment(`${starts} ${now.date()} ${now.month() + 1} ${now.year()}`, 'kk:mm DD MM YYYY', true);
         while(next.isBefore(now, 'minute')) {
             next.add(frequency, 'm');
         }
@@ -12,7 +12,13 @@ $(document).ready(function () {
     }
    
     function makeRow(name, destination, starts, frequency) {
-        return $('<tr>').html(`<td>${name}</td><td>${destination}</td><td>${frequency}<td>`);
+        const nextArrival = nextTime(starts, frequency);
+        return $('<tr>').html(
+            `<td>${name}</td>
+            <td>${destination}</td>
+            <td>${frequency}</td>
+            <td>${nextArrival.format('h:mm A')}</td>
+            <td>${moment.duration(nextArrival.diff(moment(), 'minutes'), 'minutes').asMinutes()}</td>`);
     }
 
     // $('#submit').on('click', function(e) {
