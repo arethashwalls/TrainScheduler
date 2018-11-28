@@ -6,11 +6,13 @@ $(document).ready(function () {
         return $('<tr>').html(`<td>${name}</td><td>${destination}</td><td>${frequency}<td>`);
     }
 
-    $('#submit').on('click', function(e) {
-        e.preventDefault();
+    // $('#submit').on('click', function(e) {
+    $('form').submit( function(e) { 
+       e.preventDefault();
         $('table').append(
             makeRow($('#train-name').val(), $('#destination').val(), 
             $('#first-time').val(), $('#frequency').val())
         );
+        
     });
 });
