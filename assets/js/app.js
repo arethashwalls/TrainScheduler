@@ -11,9 +11,8 @@ $(document).ready(function () {
         return next;
     }
 
-    function minAway(next) {
-        return moment.duration(next.diff(moment(), 'minutes'), 'minutes').asMinutes();
-    }
+    minAway = (next) => moment.duration(next.diff(moment(), 'minutes'), 'minutes').asMinutes();
+    
    
     function makeRow(name, destination, starts, frequency) {
         const nextArrival = nextTime(starts, frequency);
@@ -25,7 +24,6 @@ $(document).ready(function () {
             <td>${minAway(nextArrival)}</td>`);
     }
 
-    // $('#submit').on('click', function(e) {
     $('form').submit( function(e) { 
         e.preventDefault();
         nextTime($('#first-time').val().trim(), $('#frequency').val().trim());
