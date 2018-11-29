@@ -1,0 +1,27 @@
+/* Global Styles: ****************************************************************/
+@font-face {
+    font-family: 'Rye';
+    src: url('webfont/rye-regular-webfont.woff2') format('woff2'),
+         url('webfont/rye-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+body {
+    background-color: #FFE0B5;
+}
+
+/* Header Styles: ****************************************************************/
+header {
+    background-image: url(../images/train.jpg)
+}
+h1, h2 {
+    color: #FFE0B5;
+}
+h1 {
+    font-family: 'Rye';
+}
+
+/* Table Styles: *****************************************************************/
+.table .thead-dark th {
+    background-color: #5E0B15;
+}
