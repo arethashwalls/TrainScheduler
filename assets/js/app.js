@@ -47,10 +47,10 @@ $(document).ready(function () {
         //Train.makeRow returns a table row with the necessary train data:
         makeRow() {
             return `<tr id="${this.name}-row"><td>${this.name}</td>
-                <td>${this.destination}</td>
-                <td>${this.frequency}</td>
-                <td>${this.nextTime.format('h:mm A')}</td>
-                <td>${this.minAway}</td>
+                <td class="dest-cell">${this.destination}</td>
+                <td class="freq-cell">${this.frequency}</td>
+                <td class="next-cell">${this.nextTime.format('h:mm A')}</td>
+                <td class="min-away-cell">${this.minAway}</td>
                 <td><button class="update btn btn-primary" data-train-name="${this.name}">
                     <span class="oi oi-pencil"></span>
                 </button></td>
@@ -81,7 +81,7 @@ $(document).ready(function () {
         
     });
 
-    //The Clear button removes trains from localStorage and clears the table body:
+    //The Clear button removes trains from localStorage, resets allTrains, and clears the table body:
     $('#clear').on('click', () => {
         localStorage.clear();
         allTrains = [];
@@ -91,9 +91,14 @@ $(document).ready(function () {
 
     //The Remove button removes an individual train from both the table and allTrains:
     $('table').on('click', '.remove', function() {
+        //The train who's name matches this buttons data-train-name is removed:
         allTrains = allTrains.filter(train => train.trainName !== $(this).attr('data-train-name'));
         localStorage.setItem('allTrains', JSON.stringify(allTrains));
         $(`#${$(this).attr('data-train-name')}-row`).remove();
+    });
+
+    $('table').on('click', '.update', function () {
+        
     });
 
 });
