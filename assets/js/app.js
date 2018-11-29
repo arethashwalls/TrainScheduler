@@ -62,6 +62,7 @@ $(document).ready(function () {
             $('#first-time').val().trim(),
             $('#frequency').val().trim()
         );
+        $('#clear').attr('disabled', false);
         //A train row based on the train's data is added to the allTrains array:
         allTrains = [...allTrains, newTrain.makeRow()];
         //The train is added to local storage:
