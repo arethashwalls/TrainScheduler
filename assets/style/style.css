@@ -12,7 +12,10 @@ body {
 
 /* Header Styles: ****************************************************************/
 header {
-    background-image: url(../images/train.jpg)
+    background-image: url(../images/train.jpg);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
 }
 h1, h2 {
     color: #FFE0B5;
@@ -20,8 +23,32 @@ h1, h2 {
 h1 {
     font-family: 'Rye';
 }
+h2, th, strong{
+    font-family: 'Garamond', 'Baskerville', 'Baskerville Old Face', 'Hoefler Text',
+    'Times New Roman', serif; 
+}
 
 /* Table Styles: *****************************************************************/
 .table .thead-dark th {
     background-color: #5E0B15;
+    color: #FFE0B5;
+}
+th, strong {
+    font-size: 1.5em;
+}
+td, small {
+    color: #2E282A;
+}
+
+/* Form Styles: ******************************************************************/
+strong {
+    color: #5E0B15;
+}
+button.btn-primary {
+    background-color: #90323D;
+    border-color: #90323D;
+}
+button.btn-secondary {
+    background-color: #2E282A;
+    border-color: #2E282A;
 }
