@@ -68,4 +68,10 @@ $(document).ready(function () {
         $('#train-schedule').append(newTrain.makeRow());
         
     });
+
+    //The Clear button removes trains from localStorage and clears the table body:
+    $('#clear').on('click', () => {
+        localStorage.clear();
+        $('#train-schedule').empty();
+    });
 });
