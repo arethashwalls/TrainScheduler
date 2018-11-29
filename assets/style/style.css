@@ -51,7 +51,15 @@ button.btn-primary {
     background-color: #90323D;
     border-color: #90323D;
 }
-button.btn-secondary {
-    background-color: #2E282A;
-    border-color: #2E282A;
+button.btn-primary:hover {
+    background-color: #5e2128;
+    border-color: #5e2128;
+}
+button.btn-primary:active,
+button.btn-primary.active,
+button.btn-primary:not(:disabled):not(.disabled):active, 
+button.btn-primary:focus,
+button.btn-primary.focus {
+    background-color: #391418;
+    border-color: #391418;
 }

@@ -5,7 +5,9 @@ $(document).ready(function () {
     //Disable the clear button if the table is empty:
     if (allTrains.length === 0) $('#clear').attr('disabled', true);
     //Append each existing table row to the table body:
-    allTrains.forEach(train => $('#train-schedule').append(train));
+    allTrains.forEach(train => $('#train-schedule').append(train.trainRow));
+
+    
 
     /*Construct the Train class: ***********************************************************/
     class Train {
@@ -44,16 +46,23 @@ $(document).ready(function () {
         }
         //Train.makeRow returns a table row with the necessary train data:
         makeRow() {
-            return `<tr><td>${this.name}</td>
+            return `<tr id="${this.name}-row"><td>${this.name}</td>
                 <td>${this.destination}</td>
                 <td>${this.frequency}</td>
                 <td>${this.nextTime.format('h:mm A')}</td>
-                <td>${this.minAway}</td></tr>`;
+                <td>${this.minAway}</td>
+                <td><button class="update btn btn-primary" data-train-name="${this.name}">
+                    <span class="oi oi-pencil"></span>
+                </button></td>
+                <td><button class="remove btn btn-primary" data-train-name="${this.name}">
+                    <span class="oi oi-x"></span>
+                </button></td></tr>`;
         }
+        
     }
 
     //On submiting the form:
-    $('form').submit( function(e) { 
+    $('form').submit( e => { 
         e.preventDefault();
         //A new train is constructed from the form fields:
         let newTrain = new Train(
@@ -64,7 +73,7 @@ $(document).ready(function () {
         );
         $('#clear').attr('disabled', false);
         //A train row based on the train's data is added to the allTrains array:
-        allTrains = [...allTrains, newTrain.makeRow()];
+        allTrains = [...allTrains, {trainName: $('#train-name').val().trim(), trainRow: newTrain.makeRow()}];
         //The train is added to local storage:
         localStorage.setItem('allTrains', JSON.stringify(allTrains));
         //...and appended to the table body:
@@ -75,7 +84,16 @@ $(document).ready(function () {
     //The Clear button removes trains from localStorage and clears the table body:
     $('#clear').on('click', () => {
         localStorage.clear();
+        allTrains = [];
         $('#clear').attr('disabled', true);
         $('#train-schedule').empty();
     });
+
+    //The Remove button removes an individual train from both the table and allTrains:
+    $('table').on('click', '.remove', function() {
+        allTrains = allTrains.filter(train => train.trainName !== $(this).attr('data-train-name'));
+        localStorage.setItem('allTrains', JSON.stringify(allTrains));
+        $(`#${$(this).attr('data-train-name')}-row`).remove();
+    });
+
 });
