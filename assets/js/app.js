@@ -1,36 +1,61 @@
 $(document).ready(function () {
-    let allTrains = (localStorage.getItem('allTrains') || []);
-    let trainCount = (localStorage.getItem('trainCount') || 0);
 
-    function nextTime(starts, frequency) {
-        const now = moment();
-        let next = moment(`${starts} ${now.date()} ${now.month() + 1} ${now.year()}`, 'kk:mm DD MM YYYY', true);
-        while(next.isBefore(now, 'minute')) {
-            next.add(frequency, 'm');
-        }
-        return next;
+    let allTrains = (JSON.parse(localStorage.getItem('allTrains')) || []);
+    let trainCount = (JSON.parse(localStorage.getItem('trainCount')) || 0);
+
+    for(let train of allTrains) {
+        console.log(train);
     }
 
-    minAway = (next) => moment.duration(next.diff(moment(), 'minutes'), 'minutes').asMinutes();
-    
-   
-    function makeRow(name, destination, starts, frequency) {
-        const nextArrival = nextTime(starts, frequency);
-        return $('<tr>').html(
-            `<td>${name}</td>
-            <td>${destination}</td>
-            <td>${frequency}</td>
-            <td>${nextArrival.format('h:mm A')}</td>
-            <td>${minAway(nextArrival)}</td>`);
+    class Train {
+        constructor(name, destination, start, frequency) {
+            this.name = name;
+            this.destination = destination;
+            this.start = moment(`${start} ${this.now.date()} ${this.now.month() + 1} ${this.now.year()}`, 'kk:mm DD MM YYYY', true);
+            this.frequency = frequency;
+        }
+        get now() {
+            return moment();
+        }
+        get nextTime() {
+            return this.findNext();
+        }
+        get minAway() {
+            return this.findMinAway();
+        }
+        findNext() {
+            let next = this.start;
+            while(next.isBefore(this.now, 'minute')) {
+                next.add(this.frequency, 'm');
+            }
+            return next;
+        }
+        findMinAway() {
+            return moment.duration(this.nextTime.diff(this.now, 'minutes'), 'minutes').asMinutes();
+        }
+        makeRow() {
+            return $('<tr>').html(
+                `<td>${this.name}</td>
+                <td>${this.destination}</td>
+                <td>${this.frequency}</td>
+                <td>${this.nextTime.format('h:mm A')}</td>
+                <td>${this.minAway}</td>`);
+        }
     }
 
     $('form').submit( function(e) { 
         e.preventDefault();
-        nextTime($('#first-time').val().trim(), $('#frequency').val().trim());
-        $('table').append(
-            makeRow($('#train-name').val(), $('#destination').val(), 
-            $('#first-time').val(), $('#frequency').val())
+        let newTrain = new Train(
+            $('#train-name').val().trim(),
+            $('#destination').val().trim(),
+            $('#first-time').val().trim(),
+            $('#frequency').val().trim()
         );
+        trainCount++;
+        allTrains = [...allTrains, newTrain];
+        localStorage.setItem('trainCount', JSON.stringify(trainCount));
+        localStorage.setItem('allTrains', JSON.stringify(allTrains));
+        $('table').append(newTrain.makeRow());
         
     });
 });
