@@ -8,14 +8,17 @@
 }
 body {
     background-color: #FFE0B5;
+    background-image: url(../images/wallpaper.jpg);
+}
+body, header {
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
 }
 
 /* Header Styles: ****************************************************************/
 header {
     background-image: url(../images/train.jpg);
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: cover;
 }
 h1, h2 {
     color: #FFE0B5;
