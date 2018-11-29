@@ -2,6 +2,8 @@ $(document).ready(function () {
 
     //Get the array of table rows representing each train. If it doesn't yet exist, set an empty array:
     let allTrains = JSON.parse(localStorage.getItem('allTrains')) || [];
+    //Disable the clear button if the table is empty:
+    if (allTrains.length === 0) $('#clear').attr('disabled', true);
     //Append each existing table row to the table body:
     allTrains.forEach(train => $('#train-schedule').append(train));
 
@@ -72,6 +74,7 @@ $(document).ready(function () {
     //The Clear button removes trains from localStorage and clears the table body:
     $('#clear').on('click', () => {
         localStorage.clear();
+        $('#clear').attr('disabled', true);
         $('#train-schedule').empty();
     });
 });
