@@ -1,11 +1,13 @@
 $(document).ready(function () {
 
     //Get the array of table rows representing each train. If it doesn't yet exist, set an empty array:
-    let allTrains = JSON.parse(localStorage.getItem('allTrains')) || [];
+    let storedTrains = JSON.parse(localStorage.getItem('storedTrains')) || [];
+    console.log('Stored:')
+    console.log(storedTrains)
     //Disable the clear button if the table is empty:
-    if (allTrains.length === 0) $('#clear').attr('disabled', true);
+    if (storedTrains.length === 0) $('#clear').attr('disabled', true);
     //Append each existing table row to the table body:
-    allTrains.forEach(train => $('#train-schedule').append(train.trainRow));
+    
 
     
 
@@ -61,6 +63,11 @@ $(document).ready(function () {
         
     }
 
+    let allTrains = storedTrains.map(train => new Train(train.name, train.destination, train.start, train.frequency));
+    console.log('All:')
+    console.log(allTrains);
+    allTrains.forEach(train => $('table').append(train.makeRow()));
+
     //On submiting the form:
     $('form').submit( e => { 
         e.preventDefault();
@@ -71,11 +78,14 @@ $(document).ready(function () {
             $('#first-time').val().trim(),
             $('#frequency').val().trim()
         );
+        console.log('New:');
+        console.log(newTrain);
+        console.log(newTrain.start.format('kk:mm'));
         $('#clear').attr('disabled', false);
         //A train row based on the train's data is added to the allTrains array:
-        allTrains = [...allTrains, {trainName: $('#train-name').val().trim(), trainRow: newTrain.makeRow()}];
+        allTrains = [...allTrains, {name: newTrain.name, destination: newTrain.destination, start: newTrain.start.format('kk:mm'), frequency: newTrain.frequency}];
         //The train is added to local storage:
-        localStorage.setItem('allTrains', JSON.stringify(allTrains));
+        localStorage.setItem('storedTrains', JSON.stringify(allTrains));
         //...and appended to the table body:
         $('#train-schedule').append(newTrain.makeRow());
         
@@ -84,7 +94,7 @@ $(document).ready(function () {
     //The Clear button removes trains from localStorage, resets allTrains, and clears the table body:
     $('#clear').on('click', () => {
         localStorage.clear();
-        allTrains = [];
+        allTrains = [], storedTrains = [];
         $('#clear').attr('disabled', true);
         $('#train-schedule').empty();
     });
@@ -98,29 +108,41 @@ $(document).ready(function () {
     });
 
     $('table').on('click', '.update', function () {
-        $(this).html('<span class="oi oi-check"></span>');
-        $(this).toggleClass('update submit-update');
-        $('.remove').addClass('disabled');
-        formify = (shortName, placeholder) => {
-            return `<form class="form-inline">
-                <input type="text" class="form-control" id="inline-${shortName}" placeholder="${placeholder}" />
-            </form>`
-        }
-        $(`#${$(this).attr('data-train-name')}-row .name-cell`).html(formify('name', 'Train Name'));
-        $(`#${$(this).attr('data-train-name')}-row .dest-cell`).html(formify('dest', 'Destination'));
-        $(`#${$(this).attr('data-train-name')}-row .freq-cell`).html(formify('freq', 'Frequency'));
-        $(`#${$(this).attr('data-train-name')}-row .next-cell`).html(formify('next', 'Next Arrival'));
-        
+        $('#train-name').val($(`#${$(this).attr('data-train-name')}-row .name-cell`).text());
+        $('#destination').val($(`#${$(this).attr('data-train-name')}-row .dest-cell`).text());
+        $('#first-time strong').text('Next Arrival');
+        $('#first-time').val(moment($(`#${$(this).attr('data-train-name')}-row .next-cell`).text(), 'hh:mm A').format('kk:mm'));
+        $('#frequency').val($(`#${$(this).attr('data-train-name')}-row .freq-cell`).text());
+        $('#submit').attr('id', 'submit-update');
+
+
+        // $(this).html('<span class="oi oi-check"></span>');
+        // $(this).toggleClass('update submit-update');
+        // $('.remove').addClass('disabled');
+        // formify = (shortName, placeholder) => {
+        //     return `<form class="form-inline">
+        //         <input type="text" class="form-control" id="inline-${shortName}"
+        //          placeholder="${placeholder}" required  />
+        //     </form>`
+        // }
+        // $(`#${$(this).attr('data-train-name')}-row .name-cell`).html(formify('name', 'Train Name'));
+        // $(`#${$(this).attr('data-train-name')}-row .dest-cell`).html(formify('dest', 'Destination'));
+        // $(`#${$(this).attr('data-train-name')}-row .freq-cell`).html(formify('freq', 'Frequency'));
+        // $(`#${$(this).attr('data-train-name')}-row .next-cell`).html(formify('next', 'Next Arrival'));
+        // $(`#${$(this).attr('data-train-name')}-row .freq-cell input`).attr('type', 'number');
+        // $(`#${$(this).attr('data-train-name')}-row .next-cell input`).attr('pattern', "[0-9]{2}:[0-9]{2}")
     });
 
-    $('table').on('click', '.submit-update', function () {
-        console.log($('#inline-name').val().trim());
-        const updatedTrain = new Train(
-            $('#inline-name').val().trim(), 
-            $('#inline-dest').val().trim(), 
-            $('#inline-next').val().trim(),
-            $('#inline-freq').val().trim());
-        console.log(updatedTrain);
-    })
+    $('#submit-update').on('click', e => { 
+        e.preventDefault();
+        let newTrain = new Train(
+            $('#train-name').val().trim(),
+            $('#destination').val().trim(),
+            $('#first-time').val().trim(),
+            $('#frequency').val().trim()
+        );
+        $(`#${newTrain.name}-row`).html(newTrain.makeRow);
+    });
+    
 
 });

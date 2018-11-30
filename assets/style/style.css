@@ -63,3 +63,8 @@ button.btn-primary.focus {
     background-color: #391418;
     border-color: #391418;
 }
+
+/* Utility Styles: **************************************************************/
+.hidden {
+    display:none;
+}
