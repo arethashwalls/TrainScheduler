@@ -102,8 +102,8 @@ $(document).ready(function () {
     //The Remove button removes an individual train from both the table and allTrains:
     $('table').on('click', '.remove', function() {
         //The train who's name matches this buttons data-train-name is removed:
-        allTrains = allTrains.filter(train => train.trainName !== $(this).attr('data-train-name'));
-        localStorage.setItem('allTrains', JSON.stringify(allTrains));
+        allTrains = allTrains.filter(train => train.name !== $(this).attr('data-train-name'));
+        localStorage.setItem('storedTrains', JSON.stringify(allTrains));
         $(`#${$(this).attr('data-train-name')}-row`).remove();
     });
 
@@ -114,23 +114,6 @@ $(document).ready(function () {
         $('#first-time').val(moment($(`#${$(this).attr('data-train-name')}-row .next-cell`).text(), 'hh:mm A').format('kk:mm'));
         $('#frequency').val($(`#${$(this).attr('data-train-name')}-row .freq-cell`).text());
         $('#submit').attr('id', 'submit-update');
-
-
-        // $(this).html('<span class="oi oi-check"></span>');
-        // $(this).toggleClass('update submit-update');
-        // $('.remove').addClass('disabled');
-        // formify = (shortName, placeholder) => {
-        //     return `<form class="form-inline">
-        //         <input type="text" class="form-control" id="inline-${shortName}"
-        //          placeholder="${placeholder}" required  />
-        //     </form>`
-        // }
-        // $(`#${$(this).attr('data-train-name')}-row .name-cell`).html(formify('name', 'Train Name'));
-        // $(`#${$(this).attr('data-train-name')}-row .dest-cell`).html(formify('dest', 'Destination'));
-        // $(`#${$(this).attr('data-train-name')}-row .freq-cell`).html(formify('freq', 'Frequency'));
-        // $(`#${$(this).attr('data-train-name')}-row .next-cell`).html(formify('next', 'Next Arrival'));
-        // $(`#${$(this).attr('data-train-name')}-row .freq-cell input`).attr('type', 'number');
-        // $(`#${$(this).attr('data-train-name')}-row .next-cell input`).attr('pattern', "[0-9]{2}:[0-9]{2}")
     });
 
     $('#submit-update').on('click', e => { 
