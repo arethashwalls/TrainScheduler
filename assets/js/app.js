@@ -98,28 +98,29 @@ $(document).ready(function () {
     });
 
     $('table').on('click', '.update', function () {
-        $('.update').html('<span class="oi oi-check"></span>');
+        $(this).html('<span class="oi oi-check"></span>');
+        $(this).toggleClass('update submit-update');
         $('.remove').addClass('disabled');
-        $(`#${$(this).attr('data-train-name')}-row .name-cell`).html(
-            `<form class="form-inline">
-                <input type="text" class="form-control" id="inline-name" placeholder="Train Name" />
+        formify = (shortName, placeholder) => {
+            return `<form class="form-inline">
+                <input type="text" class="form-control" id="inline-${shortName}" placeholder="${placeholder}" />
             </form>`
-        );
-        $(`#${$(this).attr('data-train-name')}-row .dest-cell`).html(
-            `<form class="form-inline">
-                <input type="text" class="form-control" id="inline-dest" placeholder="Destination" />
-            </form>`
-        );
-        $(`#${$(this).attr('data-train-name')}-row .freq-cell`).html(
-            `<form class="form-inline">
-                <input type="text" class="form-control" id="inline-freq" placeholder="Frequency" />
-            </form>`
-        );
-        $(`#${$(this).attr('data-train-name')}-row .next-cell`).html(
-            `<form class="form-inline">
-                <input type="text" class="form-control" id="inline-next" placeholder="Next Arrival" />
-            </form>`
-        );
+        }
+        $(`#${$(this).attr('data-train-name')}-row .name-cell`).html(formify('name', 'Train Name'));
+        $(`#${$(this).attr('data-train-name')}-row .dest-cell`).html(formify('dest', 'Destination'));
+        $(`#${$(this).attr('data-train-name')}-row .freq-cell`).html(formify('freq', 'Frequency'));
+        $(`#${$(this).attr('data-train-name')}-row .next-cell`).html(formify('next', 'Next Arrival'));
+        
     });
+
+    $('table').on('click', '.submit-update', function () {
+        console.log($('#inline-name').val().trim());
+        const updatedTrain = new Train(
+            $('#inline-name').val().trim(), 
+            $('#inline-dest').val().trim(), 
+            $('#inline-next').val().trim(),
+            $('#inline-freq').val().trim());
+        console.log(updatedTrain);
+    })
 
 });
