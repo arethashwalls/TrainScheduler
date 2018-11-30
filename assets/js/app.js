@@ -46,7 +46,7 @@ $(document).ready(function () {
         }
         //Train.makeRow returns a table row with the necessary train data:
         makeRow() {
-            return `<tr id="${this.name}-row"><td>${this.name}</td>
+            return `<tr id="${this.name}-row"><td class="name-cell">${this.name}</td>
                 <td class="dest-cell">${this.destination}</td>
                 <td class="freq-cell">${this.frequency}</td>
                 <td class="next-cell">${this.nextTime.format('h:mm A')}</td>
@@ -98,7 +98,28 @@ $(document).ready(function () {
     });
 
     $('table').on('click', '.update', function () {
-        
+        $('.update').html('<span class="oi oi-check"></span>');
+        $('.remove').addClass('disabled');
+        $(`#${$(this).attr('data-train-name')}-row .name-cell`).html(
+            `<form class="form-inline">
+                <input type="text" class="form-control" id="inline-name" placeholder="Train Name" />
+            </form>`
+        );
+        $(`#${$(this).attr('data-train-name')}-row .dest-cell`).html(
+            `<form class="form-inline">
+                <input type="text" class="form-control" id="inline-dest" placeholder="Destination" />
+            </form>`
+        );
+        $(`#${$(this).attr('data-train-name')}-row .freq-cell`).html(
+            `<form class="form-inline">
+                <input type="text" class="form-control" id="inline-freq" placeholder="Frequency" />
+            </form>`
+        );
+        $(`#${$(this).attr('data-train-name')}-row .next-cell`).html(
+            `<form class="form-inline">
+                <input type="text" class="form-control" id="inline-next" placeholder="Next Arrival" />
+            </form>`
+        );
     });
 
 });
