@@ -78,11 +78,13 @@ $(document).ready(function () {
             $('#first-time').val().trim(),
             $('#frequency').val().trim()
         );
+//         "good_luck_buddy".split(/_(.+)/)[1]
+// "luck_buddy"
 
         let duplicates = 0;
         for(let train of allTrains) {  
-            const re = new RegExp(`^${train.name}( \(\d\))?`, 'g');
-            if(re.test(train.name)) {
+            const re = new RegExp(`^${train.name.split(/ \(\d\)/)[0]}( \(\d\))?`, 'g');
+            if(re.test(train.name.split(/ \(\d\)/)[0])) {
                duplicates++;
             }
         }
