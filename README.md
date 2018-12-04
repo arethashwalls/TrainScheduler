@@ -3,4 +3,4 @@
 
 ## TODO
 * Clean and comment code
-* Forbid duplicate names to avoid issues
+* ~~Forbid duplicate names to avoid issues~~
