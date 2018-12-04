@@ -62,7 +62,6 @@ $(document).ready(function () {
             allTrains = allTrains.filter(train => train.name !== this.name);
             localStorage.setItem('storedTrains', JSON.stringify(allTrains));
         }
-
     }
 
     //Get the array of table rows representing each train. If it doesn't yet exist, set an empty array:
