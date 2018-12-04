@@ -57,6 +57,14 @@ $(document).ready(function () {
                     <span class="oi oi-x"></span>
                 </button></td></tr>`;
         }
+        addToAllTrains() {
+            allTrains = [...allTrains, this];
+            localStorage.setItem('storedTrains', JSON.stringify(allTrains));
+        }
+        removeFromAllTrains() {
+            allTrains = allTrains.filter(train => train.name !== this.name);
+            localStorage.setItem('storedTrains', JSON.stringify(allTrains));
+        }
 
     }
 
@@ -65,10 +73,7 @@ $(document).ready(function () {
 
     allTrains.forEach(train => $('table').append(train.makeRow()));
 
-    const addTrain = (train) => {
-        allTrains = [...allTrains, train];
-        localStorage.setItem('storedTrains', JSON.stringify(allTrains));
-    }
+    
 
     //On submiting the form:
     $('#train-form').submit(e => {
@@ -85,7 +90,7 @@ $(document).ready(function () {
         //Look for duplicates:
         let duplicates = 0;
         for (let train of allTrains) {
-            const re = new RegExp(`^${train.name.split(/ \(\d\)/)[0]}( \(\d\))?`, 'g');
+            const re = new RegExp(`^${train.name.split(/ \(\d\)/)[0]}$|${train.name.split(/ \(\d\)/)[0]} \(\d\)`, 'g');
             if (re.test(newTrain.name.split(/ \(\d\)/)[0])) {
                 duplicates++;
             }
@@ -93,12 +98,7 @@ $(document).ready(function () {
         newTrain.name = (duplicates === 0) ? newTrain.name : `${newTrain.name} (${duplicates + 1})`;
 
         $('#clear').attr('disabled', false);
-        addTrain(newTrain);
-        // //A train row based on the train's data is added to the allTrains array:
-        // allTrains = [...allTrains, newTrain];
-
-        // //The train is added to local storage:
-        // localStorage.setItem('storedTrains', JSON.stringify(allTrains));
+        newTrain.addToAllTrains();
         //...and appended to the table body:
         $('#train-schedule').append(newTrain.makeRow());
     });
@@ -111,43 +111,24 @@ $(document).ready(function () {
         $('#train-schedule').empty();
     });
 
-    removeTrain = (trainName) => {
-        allTrains = allTrains.filter(train => train.name !== trainName);
-        localStorage.setItem('storedTrains', JSON.stringify(allTrains));
-    }
-
     //The Remove button removes an individual train from both the table and allTrains:
     $('table').on('click', '.remove', function () {
         //The train who's name matches this buttons data-train-name is removed:
-        removeTrain($(this).attr('data-train-name'));
+        const thisTrain = allTrains.filter(train => train.name === $(this).attr('data-train-name'))[0];
+        thisTrain.removeFromAllTrains();
         $(this).closest('tr').remove();
     });
 
     $('table').on('click', '.update', function () {
         const thisTrain = allTrains.filter(train => train.name === $(this).attr('data-train-name'))[0];
+        thisTrain.removeFromAllTrains();
         $('#train-name').val(thisTrain.name);
         $('#destination').val(thisTrain.destination);
         $('#first-time strong').text('Next Arrival');
         $('#first-time').val(thisTrain.nextTime.format('kk:mm'));
         $('#frequency').val(thisTrain.frequency).attr('readonly', true);
-        removeTrain($(this).attr('data-train-name'));
         $(this).closest('tr').remove();
         $('#train-form').attr('id', 'train-update-form');
     });
-
-    // $('#train-update-form').submit(e => {
-    //     e.preventDefault();
-    //     const newTrain = new Train(
-    //         $('#train-name').val().trim(),
-    //         $('#destination').val().trim(),
-    //         $('#first-time').val().trim(),
-    //         $('#frequency').val().trim()
-    //     );
-    //     console.log('submitting update');
-    //     addTrain(newTrain);
-    //     $('#train-schedule').append(newTrain.makeRow());
-    //     $('#train-update-form').attr('id', 'train-form');
-    // });
-
 
 });
