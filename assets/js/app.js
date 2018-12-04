@@ -6,9 +6,9 @@ $(document).ready(function () {
     //Disable the clear button if the table is empty:
     if (storedTrains.length === 0) $('#clear').attr('disabled', true);
     //Append each existing table row to the table body:
-    
 
-    
+
+
 
     /*Construct the Train class: ***********************************************************/
     class Train {
@@ -17,8 +17,7 @@ $(document).ready(function () {
             this.destination = destination;
             //The start time is parsed as a moment with the given time on today's date:
             //For *some reason* moment.js uses 0-indexed months, so add 1 to the month:
-            this.start = moment(`${start}-${this.now.date()}-${this.now.month() + 1}-${this.now.year()}`,
-                ['kk:mm-DD-MM-YYYY', 'kk:mm-DD-M-YYYY', 'kk:mm-D-MM-YYYY', 'kk:mm-D-M-YYYY'], true);
+            this.start = start;
             this.frequency = frequency;
         }
         /* Getters: ************************************************************************/
@@ -35,8 +34,9 @@ $(document).ready(function () {
         /* Methods: ***********************************************************************/
         //Train.next is incremented by the frequency and returned when it's later than Train.now:
         findNext() {
-            let next = this.start;
-            while(next.isBefore(this.now, 'minute')) {
+            let next = moment(`${this.start}-${this.now.date()}-${this.now.month() + 1}-${this.now.year()}`,
+            ['kk:mm-DD-MM-YYYY', 'kk:mm-DD-M-YYYY', 'kk:mm-D-MM-YYYY', 'kk:mm-D-M-YYYY'], true);
+            while (next.isBefore(this.now, 'minute')) {
                 next.add(this.frequency, 'm');
             }
             return next;
@@ -47,7 +47,7 @@ $(document).ready(function () {
         }
         //Train.makeRow returns a table row with the necessary train data:
         makeRow() {
-            return `<tr id="${this.name}-row"><td class="name-cell">${this.name}</td>
+            return `<tr><td class="name-cell">${this.name}</td>
                 <td class="dest-cell">${this.destination}</td>
                 <td class="freq-cell">${this.frequency}</td>
                 <td class="next-cell">${this.nextTime.format('h:mm A')}</td>
@@ -59,18 +59,20 @@ $(document).ready(function () {
                     <span class="oi oi-x"></span>
                 </button></td></tr>`;
         }
-        
+
     }
 
     let allTrains = storedTrains.map(train => new Train(train.name, train.destination, train.start, train.frequency));
+ 
 
     allTrains.forEach(train => $('table').append(train.makeRow()));
 
+
     //On submiting the form:
-    $('form').submit( e => { 
+    $('form').submit(e => {
         e.preventDefault();
-        
-        
+
+
         //A new train is constructed from the form fields:
         let newTrain = new Train(
             $('#train-name').val().trim(),
@@ -79,24 +81,27 @@ $(document).ready(function () {
             $('#frequency').val().trim()
         );
 
+
         //Look for duplicates:
         let duplicates = 0;
-        for(let train of allTrains) {  
+        for (let train of allTrains) {
             const re = new RegExp(`^${train.name.split(/ \(\d\)/)[0]}( \(\d\))?`, 'g');
-            if(re.test(train.name.split(/ \(\d\)/)[0])) {
-               duplicates++;
+            if (re.test(train.name.split(/ \(\d\)/)[0])) {
+                duplicates++;
             }
         }
         newTrain.name = (duplicates === 0) ? newTrain.name : `${newTrain.name} (${duplicates + 1})`;
+        console.log(newTrain.start)
 
         $('#clear').attr('disabled', false);
         //A train row based on the train's data is added to the allTrains array:
-        allTrains = [...allTrains, {name: newTrain.name, destination: newTrain.destination, start: newTrain.start.format('kk:mm'), frequency: newTrain.frequency}];
+        allTrains = [...allTrains, newTrain];
+
         //The train is added to local storage:
         localStorage.setItem('storedTrains', JSON.stringify(allTrains));
         //...and appended to the table body:
         $('#train-schedule').append(newTrain.makeRow());
-        
+        console.log(storedTrains)
     });
 
     //The Clear button removes trains from localStorage, resets allTrains, and clears the table body:
@@ -108,23 +113,25 @@ $(document).ready(function () {
     });
 
     //The Remove button removes an individual train from both the table and allTrains:
-    $('table').on('click', '.remove', function() {
+    $('table').on('click', '.remove', function () {
         //The train who's name matches this buttons data-train-name is removed:
         allTrains = allTrains.filter(train => train.name !== $(this).attr('data-train-name'));
         localStorage.setItem('storedTrains', JSON.stringify(allTrains));
-        $(`#${$(this).attr('data-train-name')}-row`).remove();
+        $(this).closest('tr').remove();
     });
 
     $('table').on('click', '.update', function () {
-        $('#train-name').val($(`#${$(this).attr('data-train-name')}-row .name-cell`).text());
-        $('#destination').val($(`#${$(this).attr('data-train-name')}-row .dest-cell`).text());
-        $('#first-time strong').text('Next Arrival');
-        $('#first-time').val(moment($(`#${$(this).attr('data-train-name')}-row .next-cell`).text(), 'hh:mm A').format('kk:mm'));
-        $('#frequency').val($(`#${$(this).attr('data-train-name')}-row .freq-cell`).text());
-        $('#submit').attr('id', 'submit-update');
+        //  $('#train-name').val($(`#${$(this).attr('data-row-id')}`).find('.name-cell').text());
+
+        // $('#destination').val($(`#${$(this).attr('data-row-id')} .dest-cell`).text());
+        // $('#first-time strong').text('Next Arrival');
+        // $('#first-time').val(moment($(`#${$(this).attr('data-row-id')} .next-cell`).text(), 'hh:mm A').format('kk:mm'));
+        // $('#frequency').val($(`#${$(this).attr('data-row-id')} .freq-cell`).text());
+        // $('#submit').attr('id', 'submit-update');
     });
 
-    $('#submit-update').on('click', e => { 
+    $('#submit-update').on('click', function (e) {
+        console.log($(this));
         e.preventDefault();
         let newTrain = new Train(
             $('#train-name').val().trim(),
@@ -134,6 +141,6 @@ $(document).ready(function () {
         );
         $(`#${newTrain.name}-row`).html(newTrain.makeRow);
     });
-    
+
 
 });
