@@ -17,8 +17,8 @@ $(document).ready(function () {
             this.destination = destination;
             //The start time is parsed as a moment with the given time on today's date:
             //For *some reason* moment.js uses 0-indexed months, so add 1 to the month:
-            this.start = moment(`${start} ${this.now.date()} ${this.now.month() + 1} ${this.now.year()}`,
-                'kk:mm DD MM YYYY', true);
+            this.start = moment(`${start}-${this.now.date()}-${this.now.month() + 1}-${this.now.year()}`,
+                ['kk:mm-DD-MM-YYYY', 'kk:mm-DD-M-YYYY', 'kk:mm-D-MM-YYYY', 'kk:mm-D-M-YYYY'], true);
             this.frequency = frequency;
         }
         /* Getters: ************************************************************************/
@@ -78,8 +78,7 @@ $(document).ready(function () {
             $('#first-time').val().trim(),
             $('#frequency').val().trim()
         );
-//         "good_luck_buddy".split(/_(.+)/)[1]
-// "luck_buddy"
+        console.log(newTrain)
 
         let duplicates = 0;
         for(let train of allTrains) {  
