@@ -78,8 +78,8 @@ $(document).ready(function () {
             $('#first-time').val().trim(),
             $('#frequency').val().trim()
         );
-        console.log(newTrain)
 
+        //Look for duplicates:
         let duplicates = 0;
         for(let train of allTrains) {  
             const re = new RegExp(`^${train.name.split(/ \(\d\)/)[0]}( \(\d\))?`, 'g');
